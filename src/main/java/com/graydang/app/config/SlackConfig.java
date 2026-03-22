@@ -1,5 +1,6 @@
 package com.graydang.app.config;
 
+import com.graydang.app.monitoring.AsyncSlackBotNotifier;
 import com.graydang.app.monitoring.SlackBotNotifier;
 import com.graydang.app.monitoring.SlackNotifier;
 import io.netty.channel.ChannelOption;
@@ -44,5 +45,10 @@ class SlackConfig {
   @Bean
   SlackNotifier slackNotifier(WebClient slackWebClient) {
     return new SlackBotNotifier(slackWebClient);
+  }
+
+  @Bean
+  SlackNotifier asyncSlackNotifier(WebClient slackWebClient) {
+    return new AsyncSlackBotNotifier(slackWebClient);
   }
 }

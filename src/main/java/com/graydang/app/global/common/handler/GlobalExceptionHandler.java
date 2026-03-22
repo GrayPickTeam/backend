@@ -4,12 +4,11 @@ import com.graydang.app.common.exception.ApiException;
 import com.graydang.app.common.exception.ErrorLevel;
 import com.graydang.app.common.exception.response.ExceptionResponse;
 import com.graydang.app.global.common.model.dto.BaseResponse;
-import com.graydang.app.monitoring.SlackBotNotifier;
 import com.graydang.app.monitoring.SlackNotifier;
 import com.graydang.app.monitoring.SlackPayload;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.json.JSONObject;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,13 +29,18 @@ import static com.graydang.app.global.common.model.enums.BaseResponseStatus.HTTP
 import static com.graydang.app.global.common.model.enums.BaseResponseStatus.METHOD_ARGUMENT_TYPE_MISMATCH;
 
 @ControllerAdvice
-@RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler {
-    private final SlackBotNotifier slack;
+    private final SlackNotifier slack;
+
+    private static final String SKIP_NOTIFICATION_PATH = "/";
+
+    public GlobalExceptionHandler(@Qualifier("asyncSlackNotifier") SlackNotifier slack) {
+        this.slack = slack;
+    }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ExceptionResponse> handleApiException(ApiException e){
+    public ResponseEntity<ExceptionResponse> handleApiException(ApiException e, HttpServletRequest request){
         // 1. 실제 발생 위치(= 사용자 코드 지점) 찾기
         StackTraceElement[] stackTrace = e.getStackTrace();
         StackTraceElement userStack = null;
@@ -61,7 +64,7 @@ public class GlobalExceptionHandler {
                     userStack.getClassName(), userStack.getMethodName(), userStack.getLineNumber());
         }
 
-        if (e.getLevel().equals(ErrorLevel.LV4)) {
+        if (e.getLevel().equals(ErrorLevel.LV4) && !SKIP_NOTIFICATION_PATH.equals(request.getRequestURI())) {
             slack.send(new SlackPayload(
                 "errorMsg: " + e.getMessage() + "\nlocation: " + location,
                 "#monitoring", true));
@@ -101,10 +104,12 @@ public class GlobalExceptionHandler {
 
         log.error("[500 ERROR] requestUUID={} message={} location={}", requestUUID, e.getMessage(), location, e);
 
-        slack.send(new SlackPayload(
-            String.format("[500 ERROR]\nrequestUUID: %s\nuri: %s\nmessage: %s\nlocation: %s",
-                requestUUID, request.getRequestURI(), e.getMessage(), location),
-            "#monitoring", null));
+        if (!SKIP_NOTIFICATION_PATH.equals(request.getRequestURI())) {
+            slack.send(new SlackPayload(
+                String.format("[500 ERROR]\nrequestUUID: %s\nuri: %s\nmessage: %s\nlocation: %s",
+                    requestUUID, request.getRequestURI(), e.getMessage(), location),
+                "#monitoring", null));
+        }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ExceptionResponse.of("INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다."));
