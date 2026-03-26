@@ -11,6 +11,7 @@ import com.graydang.app.global.common.model.enums.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@PreAuthorize("hasRole('ADMIN')")
 public class PoliticalTypeQuestionAdminService {
 
     private final PoliticalTypeQuestionRepository questionRepository;

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/political-type/questions")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Admin-PoliticalType-Question", description = "정치 유형 검사 문항 관리 API")
 public class PoliticalTypeQuestionAdminController {
 
