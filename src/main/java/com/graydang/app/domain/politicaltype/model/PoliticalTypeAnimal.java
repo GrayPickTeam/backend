@@ -35,9 +35,6 @@ public class PoliticalTypeAnimal extends BaseEntity {
     @Comment("동물 이름 (예: 돌고래)")
     private String name;
 
-    @Column(nullable = false, length = 10)
-    @Comment("이모지 (예: 🐬)")
-    private String emoji;
 
     @Column(length = 100)
     @Comment("부제 (예: 정의로운 혁명가)")
@@ -67,6 +64,10 @@ public class PoliticalTypeAnimal extends BaseEntity {
     @Comment("동물 캐릭터 이미지 URL")
     private String imageUrl;
 
+    @Column(length = 255)
+    @Comment("원본 이미지 파일명")
+    private String originalImageName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     @Comment("변화선호 레벨 (HIGH/MID/LOW)")
@@ -87,17 +88,24 @@ public class PoliticalTypeAnimal extends BaseEntity {
     @Comment("안 맞는 유형")
     private PoliticalTypeAnimal incompatibleAnimal;
 
-    public void update(String name, String emoji, String subtitle, String oneLiner,
+    public void update(String code, String name, String subtitle, String oneLiner,
                        String description, List<String> keywords, List<String> representativeFigures,
-                       String imageUrl) {
+                       ScoreLevel changePreferenceLevel, ScoreLevel valueOrientationLevel) {
+        this.code = code;
         this.name = name;
-        this.emoji = emoji;
         this.subtitle = subtitle;
         this.oneLiner = oneLiner;
         this.description = description;
         this.keywords = keywords;
         this.representativeFigures = representativeFigures;
+        this.changePreferenceLevel = changePreferenceLevel;
+        this.valueOrientationLevel = valueOrientationLevel;
+    }
+
+    /** 이미지 교체. 기존 S3 삭제는 Service에서 처리. */
+    public void updateImage(String imageUrl, String originalImageName) {
         this.imageUrl = imageUrl;
+        this.originalImageName = originalImageName;
     }
 
     public void updateCompatibility(PoliticalTypeAnimal compatible, PoliticalTypeAnimal incompatible) {

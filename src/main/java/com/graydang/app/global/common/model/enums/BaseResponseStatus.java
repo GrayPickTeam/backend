@@ -92,7 +92,14 @@ public enum BaseResponseStatus {
      * 3400: Search Keyword Exception
      */
     SEARCH_KEYWORD_NOT_FOUND(false, HttpStatus.NOT_FOUND, 3401, "존재하지 않는 검색 키워드입니다."),
-    SEARCH_KEYWORD_ALREADY_EXISTS(false, HttpStatus.BAD_REQUEST, 3402, "이미 존재하는 검색 키워드입니다.");
+    SEARCH_KEYWORD_ALREADY_EXISTS(false, HttpStatus.BAD_REQUEST, 3402, "이미 존재하는 검색 키워드입니다."),
+
+    /**
+     * 3500: Political Type Exception
+     */
+    POLITICAL_TYPE_QUESTION_NOT_FOUND(false, HttpStatus.NOT_FOUND, 3501, "존재하지 않는 검사 문항입니다."),
+    POLITICAL_TYPE_ANIMAL_NOT_FOUND(false, HttpStatus.NOT_FOUND, 3502, "존재하지 않는 동물 유형입니다."),
+    POLITICAL_TYPE_RESULT_NOT_FOUND(false, HttpStatus.NOT_FOUND, 3503, "검사 결과가 존재하지 않습니다.");
 
     private final boolean isSuccess;
     @JsonIgnore

@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 /**
  * 정치 유형 검사 문항.
  * 각 문항은 하나의 측정 지표(MetricType)에 소속되며, 역코딩 여부를 가진다.
+ * displayOrder가 화면 표시 순서이자 문항 번호 역할을 겸한다.
  */
 @Entity
 @Table(name = "political_type_question")
@@ -21,10 +22,6 @@ public class PoliticalTypeQuestion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    @Comment("문항 번호")
-    private Integer questionNumber;
 
     @Column(nullable = false, length = 500)
     @Comment("문항 텍스트")
@@ -41,13 +38,18 @@ public class PoliticalTypeQuestion extends BaseEntity {
     private Boolean reverseScored = false;
 
     @Column(nullable = false)
-    @Comment("화면 표시 순서")
+    @Comment("화면 표시 순서 (1부터 시작, 문항 번호 겸용)")
     private Integer displayOrder;
 
-    public void update(String content, MetricType metricType, Boolean reverseScored, Integer displayOrder) {
+    /** 문항 내용 수정. */
+    public void update(String content, MetricType metricType, Boolean reverseScored) {
         this.content = content;
         this.metricType = metricType;
         this.reverseScored = reverseScored;
+    }
+
+    /** displayOrder 변경. */
+    public void updateDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
 }
