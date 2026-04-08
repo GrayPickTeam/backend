@@ -1,6 +1,7 @@
 package com.graydang.app.domain.politicaltype.repository.impl;
 
 import com.graydang.app.domain.politicaltype.model.PoliticalTypeAnimal;
+import com.graydang.app.domain.politicaltype.model.enums.ScoreLevel;
 import com.graydang.app.domain.politicaltype.repository.PoliticalTypeAnimalRepository;
 import com.graydang.app.domain.politicaltype.repository.jpa.PoliticalTypeAnimalJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,17 @@ public class PoliticalTypeAnimalRepositoryImpl implements PoliticalTypeAnimalRep
     @Override
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<PoliticalTypeAnimal> findByChangePreferenceLevelAndValueOrientationLevel(
+            ScoreLevel changePreferenceLevel, ScoreLevel valueOrientationLevel) {
+        return jpaRepository.findByChangePreferenceLevelAndValueOrientationLevel(
+                changePreferenceLevel, valueOrientationLevel);
+    }
+
+    @Override
+    public Optional<PoliticalTypeAnimal> findByCode(String code) {
+        return jpaRepository.findByCode(code);
     }
 }
