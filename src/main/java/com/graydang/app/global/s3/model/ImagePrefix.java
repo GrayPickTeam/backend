@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ImagePrefix {
 
     USER_PROFILE("user-profile/"),
+    POLITICAL_TYPE_ANIMAL("political-type/animal/"),
     TEST("test/"),
     DEFAULT("default/");
 

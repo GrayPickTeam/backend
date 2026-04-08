@@ -53,6 +53,13 @@ public class SecurityConfig {
                     .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/actuator/**").permitAll()
 
+                    // 정치유형 검사 공개 API
+                    .requestMatchers(HttpMethod.GET, "/api/political-type/questions").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/political-type/submit").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/political-type/ranking").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/political-type/animals/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/political-type/participant-count").permitAll()
+
                     // 어드민 전용 API
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
